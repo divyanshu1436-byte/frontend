@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Meter</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            padding-top: 70px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin: 10px 0;
+        }
+
+        .bar {
+            height: 10px;
+            background: lightgray;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        #strengthBar {
+            height: 10px;
+            width: 0%;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        #strengthText {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: gray;
+        }
+
+        .valid {
+            color: green;
+        }
+
+        .invalid {
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Password Strength</h2>
+
+    <input type="password" id="password"
+           placeholder="Enter password">
+
+    <br>
+
+    <input type="checkbox" id="showPassword">
+    Show password
+
+    <div class="bar">
+        <div id="strengthBar"></div>
+    </div>
+
+    <p id="strengthText"></p>
+
+    <ul id="rules">
+        <li>At least 8 characters</li>
+        <li>One uppercase letter</li>
+        <li>One lowercase letter</li>
+        <li>One number</li>
+        <li>One special symbol (@, #, $, etc.)</li>
+    </ul>
+
+</div>
+
+<script>
+
+    // Get HTML elements
+    let password = document.getElementById("password");
+    let showPassword = document.getElementById("showPassword");
+    let strengthText = document.getElementById("strengthText");
+    let strengthBar = document.getElementById("strengthBar");
+
+    let rules = document.querySelectorAll("#rules li");
+
+    // Password checking function
+    function checkPassword() {
+
+        let pass = password.value;
+
+        // Five password conditions
+        let conditions = [
+            pass.length >= 8,
+            /[A-Z]/.test(pass),
+            /[a-z]/.test(pass),
+            /[0-9]/.test(pass),
+            /[^A-Za-z0-9]/.test(pass)
+        ];
+
+        let count = 0;
+
+        // Check every condition using for loop
+        for (let i = 0; i < conditions.length; i++) {
+
+            if (conditions[i]) {
+                count++;
+                rules[i].className = "valid";
+            }
+            else {
+                rules[i].className = "invalid";
+            }
+        }
+
+        // Empty password
+        if (pass === "") {
+            strengthText.innerText = "";
+            strengthBar.style.width = "0%";
+            strengthBar.style.backgroundColor = "lightgray";
+            return;
+        }
+
+        // Calculate strength
+        if (count <= 2) {
+            strengthText.innerText = "Weak";
+            strengthBar.style.backgroundColor = "red";
+        }
+        else if (count <= 4) {
+            strengthText.innerText = "Medium";
+            strengthBar.style.backgroundColor = "orange";
+        }
+        else {
+            strengthText.innerText = "Strong";
+            strengthBar.style.backgroundColor = "green";
+        }
+
+        strengthBar.style.width = (count * 20) + "%";
+    }
+
+    // Check password on every keystroke
+    password.addEventListener("input", checkPassword);
+
+    // Show / Hide password
+    showPassword.addEventListener("change", function() {
+
+        if (showPassword.checked) {
+            password.type = "text";
+        }
+        else {
+            password.type = "password";
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
